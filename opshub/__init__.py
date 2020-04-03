@@ -4,6 +4,7 @@ OpsHub
 """
 from flask import Flask, request
 from flask_restful import Api, Resource
+from flask_accept import accept
 
 version = '0.0.1'
 
@@ -11,12 +12,13 @@ version = '0.0.1'
 class FileEndpoint(Resource):
     def get(self):
         #TODO:: differentiate endpoint based on passed args, grab data, respond
-        return "get all files"
+        return { "message ": "get all files" }
     
+    @accept('multipart/form-data')
     def post(self):
         f = request.files['file']
         #TODO:: save file to db, handle errors, return id
-        return f.filename
+        return { "message": "hello" }
     
     def delete(self):
         #TODO:: grab data, delete file, handle errors, return response
