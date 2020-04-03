@@ -12,7 +12,7 @@ version = '0.0.1'
 class FileEndpoint(Resource):
     def get(self):
         #TODO:: differentiate endpoint based on passed args, grab data, respond
-        return { "message ": "get all files" }
+        return [ { "filename" : "Fake.txt", "date": "now", "id":1 } ]
     
     @accept('multipart/form-data')
     def post(self):

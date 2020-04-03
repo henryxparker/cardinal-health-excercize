@@ -1,7 +1,7 @@
 import React from 'react';
 import MaterialTable from "material-table";
 import { Fab, Typography } from '@material-ui/core';
-import { post } from 'axios';
+import axios from 'axios';
 import "@material-ui/icons";
 
 import './App.css';
@@ -11,30 +11,7 @@ function App() {
   return (
     <div className="App">
         <h1>Files</h1>
-        <div className="table-container">
-          <MaterialTable
-            columns={[
-              { title: "Filename", field: "filename" },
-              { title: "Date Downloaded", field: "date" },
-              { title: "Log id", field: "id", type: "numeric" },
-            ]}
-            data={[
-              { filename: "Fake.log", date: "1/1/1", id: 1 }
-            ]}
-            options={{
-              search: false,
-              paging:false,
-              toolbar:false
-            }}
-            title="Files"
-            actions={[
-              {
-                icon: 'delete',
-                onClick: (event, rowData) => window.confirm("Are you sure you wish to delete " + rowData.filename + "?")
-              }
-            ]}
-          />
-        </div>
+        <Table/>
         <div className="fab-container">
           <FileUpload/>
         </div>
@@ -42,31 +19,81 @@ function App() {
   );
 }
 
-class FileUpload extends React.Component {
-  
-  constructor(props) {
-    super(props);
-    this.onChange = this.onChange.bind(this)
+class Table extends React.Component{
+  render() {
+    return(
+      <div className="table-container">
+        <MaterialTable
+          columns={[
+            { title: "Filename", field: "filename" },
+            { title: "Date Downloaded", field: "date" },
+            { title: "Log id", field: "id", type: "numeric" },
+          ]}
+          data={() => axios.get("/files")}
+          options={{
+            search: false,
+            paging:false,
+            toolbar:false
+          }}
+          title="Files"
+          actions={[
+            {
+              icon: 'delete',
+              onClick: (event, rowData) => { 
+                const confirmed = window.confirm("Are you sure you wish to delete " + rowData.filename + "?")
+                if(confirmed){
+                  const url = '/files/' + rowData.id.toString();
+                  axios.delete(url)
+                }
+              }
+            }
+          ]}
+        />
+      </div>
+    )
   }
 
-  onChange(e){
-    const url = 'http://localhost/files'
-    const formData = new FormData();
-    formData.append('file', e.target.files[0])
-    const config = {
-      headers: {
-        'processData': false,
-        'content-type': false
-      }
+}
+
+class FileUpload extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state ={
+      file:null
     }
-    post(url, formData, config).then((response)=>{
-      console.log(response.data) //TODO:: handle response gracefully
+    this.onFormSubmit = this.onFormSubmit.bind(this)
+    this.onChange = this.onChange.bind(this)
+    this.fileUpload = this.fileUpload.bind(this)
+  }
+
+  onFormSubmit(e){
+    e.preventDefault() // Stop form submit
+    this.fileUpload(this.state.file).then((response)=>{
+      console.log(response.data); //TODO:: handle errors gracefully
     })
+  }
+
+  onChange(e) {
+    this.setState({file:e.target.files[0]})
+    this.submit.submit()
+  }
+
+  fileUpload(file){
+    const url = '/files';
+    const formData = new FormData();
+    formData.append('file',file)
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data'
+        }
+    }
+    return  axios.post(url, formData, config)
   }
   
   render() {
     return (
-      <div>
+      <form ref={(ref) => this.submit = ref}>
         <input 
           id="upload" 
           type="file"
@@ -81,7 +108,7 @@ class FileUpload extends React.Component {
         >
           <Typography>Upload</Typography>  
         </Fab>
-      </div>
+      </form>
     );
   }
 }
