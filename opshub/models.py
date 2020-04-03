@@ -7,6 +7,13 @@ from sqlalchemy import orm
 
 Base = declarative.declarative_base()
 
+class GumballLogDocument(Base): # very basic file path storage for log files
+    __tablename__ = 'gumball_log_document'
+
+    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+    file_name= sa.Column(sa.String, nullable=False)
+    file_path= sa.Column(sa.String, nullable=False)
+
 
 class GumballMachine(Base):
     __tablename__ = 'gumball_machine'
