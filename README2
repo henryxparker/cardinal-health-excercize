@@ -1,0 +1,11 @@
+There are many things unfinished as it stands. I've worked hard to get this 
+particular setup working since it aparently doesn't like my particular distro of linux, 
+and because I have never used docker or flask before.
+
+Honestly I'm happy I was given this test because it was a great learning experience.
+
+I plan to continue developing for a few more days so I can get it actually functioning
+as intended and so I can practice python/react testing frameworks (since my experience
+in python has been mostly academic ML). I understand if my lack of experience in this
+domain is a dealbreaker, but I would greatly appreciate any comments on my code that 
+would help me improve my code for the future :).
